@@ -1,0 +1,116 @@
+version: '2'
+services:
+
+  # Plex media server
+  plex:
+    image: linuxserver/plex
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+      VERSION: latest
+    stdin_open: true
+    volumes:
+      - ${DIR}/plex:/config
+      - ${DIR}/media:/media
+    tty: true
+    ports:
+      - 32400:32400/tcp
+
+  # Plex stats and metrics
+  tautulli:
+    image: linuxserver/tautulli
+    depends_on:
+      - plex
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+      VERSION: latest
+    volumes:
+      - ${DIR}/tautulli:/config
+    ports:
+      - 8181:8181
+
+  # App to keep track of all of the apps
+  organizr:
+    image: lsiocommunity/organizr
+    depends_on:
+      - plex
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+      VERSION: latest
+    volumes:
+      - ${DIR}/organizr:/config
+    ports:
+      - 80:80
+
+  # App for searching for and requesting media
+  ombi:
+    image: linuxserver/ombi
+    depends_on:
+      - plex
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+      VERSION: latest
+    volumes:
+      - ${DIR}/ombi:/config
+    ports:
+      - 3579:3579
+
+  # App for finding the correct Usenet movies to download
+  sonarr:
+    image: linuxserver/sonarr
+    depends_on:
+      - plex
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+      VERSION: latest
+    volumes:
+      #- /etc/localtime:/etc/localtime:ro
+      - ${DIR}/sonarr:/config
+      - ${DIR}/media/tv:/tv
+      - ${DIR}/downloads:/downloads
+    ports:
+      - 8989:8989
+
+  # App for finding the correct Usenet tv shows to download
+  radarr:
+    image: linuxserver/radarr
+    depends_on:
+      - plex
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+      VERSION: latest
+    volumes:
+      - ${DIR}/radarr:/config
+      - ${DIR}/media/movies:/movies
+      - ${DIR}/downloads:/downloads
+    ports:
+      - 7878:7878
+
+  # App for downloading media from Usenet
+  sabnzbd:
+    image: linuxserver/sabnzbd
+    depends_on:
+      - plex
+    environment:
+      PGID: ${PGID}
+      PUID: ${PUID}
+      TZ: ${TZ}
+      VERSION: latest
+    volumes:
+      - ${DIR}/sabnzbd:/config
+      - ${DIR}/downloads:/downloads
+      - ${DIR}/incomplete-downloads:/incomplete-downloads
+    ports:
+      - 8080:8080
+      - 9090:9090

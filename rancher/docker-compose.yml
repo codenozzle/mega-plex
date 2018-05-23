@@ -1,0 +1,35 @@
+master:
+  image: rancher/server
+  container_name: master
+  volumes_from:
+    - mysql
+  ports:
+    - "8080:8080"
+  links:
+    - mysql
+  environment:
+    - CATTLE_DB_CATTLE_MYSQL_HOST=mysql
+    - CATTLE_DB_CATTLE_MYSQL_PORT=3306
+    - CATTLE_DB_CATTLE_MYSQL_NAME=rancher
+    - CATTLE_DB_CATTLE_USERNAME=rancher
+    - CATTLE_DB_CATTLE_PASSWORD=yourpassword
+
+mysql:
+  image: mysql
+  container_name: rancherdb
+  volumes_from:
+      - mysqldata
+  ports:
+    - "3306:3306"
+  environment:
+    - MYSQL_ROOT_PASSWORD=yourpassword
+    - MYSQL_DATABASE=rancher
+    - MYSQL_USER=rancher
+    - MYSQL_PASSWORD=yourpassword
+
+mysqldata:
+  container_name : mysqldata
+  image: gliderlabs/alpine
+  volumes:
+    - /var/lib/mysql
+  command: /bin/sh
