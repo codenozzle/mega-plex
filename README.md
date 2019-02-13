@@ -3,6 +3,7 @@ Mega-Plex
 
 ### Run
 `docker-compose up`
+`docker-compose up -d`
 
 ### Try it out
 - [Organizr](http://localhost)
@@ -22,9 +23,30 @@ Mega-Plex
 
 ### Rebuild
 `docker-compose build --no-cache`
+`docker-compose up --force-recreate --build`
 
 ### Clean up
-`docker image prune`
+`docker image prune -f`
 
 ### Restart a container
 `docker-compose restart <container name>`
+
+## List Docker CLI commands
+`docker`
+`docker container --help`
+
+## Display Docker version and info
+`docker --version`
+`docker version`
+`docker info`
+
+## Execute Docker image
+`docker run hello-world`
+
+## List Docker images
+`docker image ls`
+
+## List Docker containers (running, all, all in quiet mode)
+`docker container ls`
+`docker container ls --all`
+`docker container ls -aq`

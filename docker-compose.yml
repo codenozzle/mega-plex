@@ -1,6 +1,25 @@
 version: '2'
 services:
 
+  # Portainer Templates
+  portainer-templates:
+    image: portainer/templates
+    container_name: "portainer-templates"
+    volumes:
+      - ${DIR}/templates2:/templates2
+
+  # Portainer - to manage containers
+  portainer:
+    image: portainer/portainer
+    restart: always
+    container_name: "portainer-app"
+    command: --templates http://templates/templates.json -d /data -H tcp://<DOCKER_HOST>:<DOCKER_PORT>
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DIR}/portainer/data:/data
+    ports:
+      - 9000:9000
+
   # Plex media server
   plex:
     image: linuxserver/plex
@@ -9,13 +28,19 @@ services:
       PUID: ${PUID}
       TZ: ${TZ}
       VERSION: latest
-    stdin_open: true
     volumes:
       - ${DIR}/plex:/config
-      - ${DIR}/media:/media
+      - ${DIR}/media/movies:/media/movies
+      - ${DIR}/media/tv:/media/tv
+      - ${DIR}/media/transcode:/media/transcode
     tty: true
     ports:
-      - 32400:32400/tcp
+      - 32400:32400
+      - 32400:32400/udp
+      - 32469:32469
+      - 32469:32469/udp
+      - 5353:5353/udp
+      - 1900:1900/udp
 
   # Plex stats and metrics
   tautulli:
@@ -67,6 +92,7 @@ services:
     image: linuxserver/sonarr
     depends_on:
       - plex
+      - sabnzbd
     environment:
       PGID: ${PGID}
       PUID: ${PUID}
@@ -76,7 +102,7 @@ services:
       #- /etc/localtime:/etc/localtime:ro
       - ${DIR}/sonarr:/config
       - ${DIR}/media/tv:/tv
-      - ${DIR}/downloads:/downloads
+      - ${DIR}/media/downloads:/downloads
     ports:
       - 8989:8989
 
@@ -85,6 +111,7 @@ services:
     image: linuxserver/radarr
     depends_on:
       - plex
+      - sabnzbd
     environment:
       PGID: ${PGID}
       PUID: ${PUID}
@@ -93,7 +120,7 @@ services:
     volumes:
       - ${DIR}/radarr:/config
       - ${DIR}/media/movies:/movies
-      - ${DIR}/downloads:/downloads
+      - ${DIR}/media/downloads:/downloads
     ports:
       - 7878:7878
 
@@ -109,8 +136,8 @@ services:
       VERSION: latest
     volumes:
       - ${DIR}/sabnzbd:/config
-      - ${DIR}/downloads:/downloads
-      - ${DIR}/incomplete-downloads:/incomplete-downloads
+      - ${DIR}/media/downloads:/downloads
+      - ${DIR}/media/incomplete-downloads:/incomplete-downloads
     ports:
       - 8080:8080
       - 9090:9090
