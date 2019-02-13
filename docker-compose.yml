@@ -4,6 +4,7 @@ services:
   # Portainer Templates
   portainer-templates:
     image: portainer/templates
+    restart: always
     container_name: "portainer-templates"
     volumes:
       - ${DIR}/templates2:/templates2
@@ -23,6 +24,7 @@ services:
   # Plex media server
   plex:
     image: linuxserver/plex
+    restart: always
     environment:
       PGID: ${PGID}
       PUID: ${PUID}
@@ -45,6 +47,7 @@ services:
   # Plex stats and metrics
   tautulli:
     image: linuxserver/tautulli
+    restart: always
     depends_on:
       - plex
     environment:
@@ -60,6 +63,7 @@ services:
   # App to keep track of all of the apps
   organizr:
     image: lsiocommunity/organizr
+    restart: always
     depends_on:
       - plex
     environment:
@@ -75,6 +79,7 @@ services:
   # App for searching for and requesting media
   ombi:
     image: linuxserver/ombi
+    restart: always
     depends_on:
       - plex
     environment:
@@ -90,6 +95,7 @@ services:
   # App for finding the correct Usenet movies to download
   sonarr:
     image: linuxserver/sonarr
+    restart: always
     depends_on:
       - plex
       - sabnzbd
@@ -109,6 +115,7 @@ services:
   # App for finding the correct Usenet tv shows to download
   radarr:
     image: linuxserver/radarr
+    restart: always
     depends_on:
       - plex
       - sabnzbd
@@ -127,6 +134,7 @@ services:
   # App for downloading media from Usenet
   sabnzbd:
     image: linuxserver/sabnzbd
+    restart: always
     depends_on:
       - plex
     environment:
