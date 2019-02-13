@@ -6,6 +6,7 @@ Mega-Plex
 `docker-compose up -d`
 
 ### Try it out
+- [Portainer](http://localhost:9000/#/home)
 - [Organizr](http://localhost)
 - [Plex](http://localhost:32400)  
 - [Tautulli](http://localhost:8181)

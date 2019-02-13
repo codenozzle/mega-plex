@@ -13,7 +13,7 @@ services:
     image: portainer/portainer
     restart: always
     container_name: "portainer-app"
-    command: --templates http://templates/templates.json -d /data -H tcp://<DOCKER_HOST>:<DOCKER_PORT>
+    #command: --templates http://templates/templates.json -d /data -H tcp://<DOCKER_HOST>:<DOCKER_PORT>
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${DIR}/portainer/data:/data
